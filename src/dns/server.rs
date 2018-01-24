@@ -35,7 +35,7 @@ impl Server {
 
                 let answer_message: Message;
 
-                if query_message.questions[0].name.last().unwrap() == "dev" {
+                if query_message.questions[0].name.last().unwrap() == "local" {
                     let mut answers = Vec::new();
 
                     answers.push(Answer{
