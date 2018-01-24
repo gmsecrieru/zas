@@ -1,79 +1,36 @@
 # Zas
 
-[![Build Status](https://travis-ci.org/juanibiapina/zas.svg?branch=master)](https://travis-ci.org/juanibiapina/zas)
+This is a slightly modified version of [zas](https://github.com/juanibiapina/zas) which maps to `.local` TLD instead of `.dev`.
 
-Zas is a tool to help with local web development, inspired by [Pow](http://pow.cx).
-
-It works by running a DNS server that resolves `.dev` domains to your local
-machine. Then, when the browser makes requests to `awesome.dev`, zas proxies
-the requests to your configured applications.
-
-## Operating System Notes
-
-Install scripts are only provided for OSX. To make it work on Linux, you need
-to setup a custom dns rule (and port) that points to zas and an iptable rule to
-redirect http traffic from port 80 to the zas port.
-
-Pull requests are very welcome.
+Current implementation is not fully functional as you still need to add your `[domain].local` entry to `/etc/hosts` -- which makes it useful only for the port forwarding mapping of `app.toml`.
 
 ## Installation
 
-**Zas can't run alongsize Pow, make sure you remove one before installing the other**
+After properly setting up your [Rust](https://doc.rust-lang.org/book/first-edition/getting-started.html#installing-rust-1) environment:
 
-To install, run:
-
-```
-brew tap juanibiapina/zas
-brew install zas
-zas install
+```bash
+$ ./install.sh
 ```
 
 To uninstall, run:
 
-```
-zas uninstall
-brew uninstall zas
+```bash
+$ ./uninstall.sh
 ```
 
 Sudo is required in order to setup the dns and port forwarding rules.
 
-## Usage
-
-First make sure `zas` is running in a terminal window. It needs to be restarted
-when the any changes are made to the config file.
-
-### Configuring Applications
-
-To configure an application with Zas, add a mapping on
-`~/.config/zas/apps.toml` with the name of your app and the port where it is
-running:
+Remember to add your `~/.config/zas/apps.toml` domains to `/etc/hosts`, e.g.:
 
 ```toml
+# ~/.config/zas/apps.toml
 app_name = 3000
 ```
 
-Make sure your app is running on the port you specified. Zas will not try to
-run it in any way.
+```bash
+# /etc/hosts
 
-Now you can use `app_name.dev` in your browser to access the application.
+# ...
 
-## How does it work?
-
-Zas runs a DNS server on port 12043 that resolves `.dev` domains to
-`127.0.0.1` and ignores any other domains.
-
-It also has an HTTP server running on port 12044, and the install script sets
-up a rule that forwards requests on port 80 to 12044. When Zas receives the
-request, it extracts the `Host` header to determine the name of the app to
-proxy the request to.
-
-If there is a port mapping for that app on the config file, zas proxies the
-request to that port.
-
-## Contributing
-
-Clone the repository and make sure the tests run. You'll probably need:
-
-- [Rust](https://www.rust-lang.org) stable
-- [bats](https://github.com/sstephenson/bats)
-- [Nodejs](https://nodejs.org)
+127.0.0.1       app_name.local
+```
